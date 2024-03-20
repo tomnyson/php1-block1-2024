@@ -40,6 +40,12 @@
                 $errors['passwordconfirm'] = "password not matches";
             }
         }
+        if (isset($_POST["role"])) {
+            if (empty($_POST['role'])) {
+                $errors['role'] = " role not empty ";
+            }
+        }
+
         // validate email 
         /**
          *  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -51,13 +57,14 @@
             if (empty($_POST['email'])) {
                 $errors['email'] = "email is required";
             } else {
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                     $errors['email'] = "invalid email format";
                 }
             }
         }
 
         var_dump($errors);
+        var_dump($_POST);
     }
 
     /**
@@ -68,7 +75,18 @@
         <h1>Đăng ký</h1>
         <form method="post" action="./register.php">
             <label for="username">Username</label>
-            <input class="form-control mb-3" type="text" name="username" value="<?php echo $_POST['username'] ?>" placeholder="nhap tai khoan">
+            <?php
+            //$a = 3 > 4 ? 'a' : 'b';
+            /**
+             * isset($_POST["username"] ? echo $_POST["username"] : ''
+             */
+            $username = "";
+            if (isset($_POST["username"])) {
+                $username = $_POST["username"];
+            }
+
+            ?>
+            <input class="form-control mb-3" type="text" name="username" value="<?php echo $username ?>" placeholder="nhap tai khoan">
             <?php
             if (isset($errors['username'])) {
                 echo "<p class='error'>$errors[username]</p>";
@@ -96,26 +114,31 @@
 
             <label for="password">Confirm password</label>
 
-            <input class="form-control  mb-3" type="text" name="passwordconfirm" value="<?php echo $_POST['password'] ?>" placeholder="nhap lai mat khau">
+            <input class="form-control  mb-3" type="text" name="passwordconfirm" value="<?php echo $_POST['passwordconfirm'] ?>" placeholder="nhap lai mat khau">
             <?php
             if (isset($errors['passwordconfirm'])) {
                 echo "<p class='error'>$errors[passwordconfirm]</p>";
             }
             ?>
 
-            <select class="form-select mb-3">
-                <option>chọn quyền</option>
+            <select class="form-select mb-3" name="role">
+                <option value="">chọn quyền</option>
                 <option value="admin">admin</option>
                 <option value="user">user</option>
             </select>
+            <?php
+            if (isset($errors['role'])) {
+                echo "<p class='error'>$errors[role]</p>";
+            }
 
+            ?>
             <input class="btn btn-primary " type="submit" name=submit value="register" />
             <?php
-            if (count($errors) > 0) {
-                foreach ($errors as $err) {
-                    echo "<p class='error'>$err</p>";
-                }
-            }
+            // if (count($errors) > 0) {
+            //     foreach ($errors as $err) {
+            //         echo "<p class='error'>$err</p>";
+            //     }
+            // }
             ?>
         </form>
     </div>
