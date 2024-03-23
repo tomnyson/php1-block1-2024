@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <head>
-    <title>bai 6</title>
+    <title>bai 5</title>
     <link rel="stylesheet" href="./style.css">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,7 +10,7 @@
 
 <body>
     <div class="container-fluid">
-        <h1>session </h1>
+        <h1>bai 5 Form </h1>
         <?php
         session_start();
         ini_set('display_errors', '1');
