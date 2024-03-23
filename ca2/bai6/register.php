@@ -12,11 +12,13 @@
 
 <body>
     <?php
+    session_start();
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
     $errors = [];
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        var_dump($_SESSION);
         // var_dump($_POST);
         // var_dump($_POST['username']); empty
         if (isset($_POST['username'])) {
@@ -60,10 +62,38 @@
                     $errors['role'] = "role is required";
                 }
             }
-            // var_dump($errors);
+            /**
+             * step 1: validate error == 0 theme user vao session
+             *  th1: session chua co => tao moi
+             * th2: session da co => them dua lieu vao session
+             * cuoi cung => update lai session
+             **/
+            if (count($errors) == 0) {
+                if (!isset($_SESSION['users'])) {
+                    $users =  [];
+                    $user = array(
+                        'username' => $_POST['username'],
+                        'email' => $_POST['email'],
+                        'password' => $_POST['password'],
+                        "role" => $_POST['role'],
+                    );
+                    array_push($users, $user);
+                    $_SESSION['users'] = $users;
+                } else {
+                    $users = $_SESSION['users'];
+                    $user = array(
+                        'username' => $_POST['username'],
+                        'email' => $_POST['email'],
+                        'password' => $_POST['password'],
+                        "role" => $_POST['role'],
+                    );
+                    array_push($users, $user);
+                    $_SESSION['users'] = $users;
+                }
+            }
         }
     }
-
+    // isset($_SESSION['username'])
     /**
      * validate username and password ko duoc tron
      *

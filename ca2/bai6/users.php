@@ -12,9 +12,17 @@
 
 <body>
     <?php
+    session_start();
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
+
+    if (!isset($_SESSION['username'])) {
+        //redirect to link
+        header("Location: index.php");
+        exit;
+    }
+
     $errors = [];
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // var_dump($_POST);
@@ -88,6 +96,13 @@
     ?>
     <div class="container">
         <h1>DS tài khoản</h1>
+        <?php
+        if (isset($_SESSION['username'])) {
+            echo ("<strong>xin chao: $_SESSION[username]</strong>");
+        }
+        ?>
+        <br>
+        <a class="btn btn-primary mt-5" href="register.php">Add user</a>
         <table class="table">
             <tr>
                 <th>username</th>
@@ -96,22 +111,19 @@
                 <th>role</th>
             </tr>
             <?php
-            foreach ($ds_users as $keys => $values) {
-                echo "<tr> 
-                <td> $values[username] </td>
-                <td> $values[password] </td>
-                <td> $values[email] </td>
-                <td> $values[role] </td>
-                </tr>";
+
+            if (isset($_SESSION['users'])) {
+                foreach ($_SESSION['users'] as $keys => $values) {
+                    echo "<tr> 
+                    <td> $values[username] </td>
+                    <td> $values[password] </td>
+                    <td> $values[email] </td>
+                    <td> $values[role] </td>
+                    </tr>";
+                }
             }
 
             ?>
-            <tr>
-                <td>username</td>
-                <td>password</td>
-                <td>email</td>
-                <td>role</td>
-            </tr>
         </table>
     </div>
 </body>

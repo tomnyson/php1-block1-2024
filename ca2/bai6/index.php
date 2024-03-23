@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <head>
-    <title>bai 5</title>
+    <title>bai 6</title>
     <link rel="stylesheet" href="./style.css">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,7 +10,7 @@
 
 <body>
     <div class="container-fluid">
-        <h1>bai 5 Form </h1>
+        <h1>bai 5 Session </h1>
         <?php
         session_start();
         ini_set('display_errors', '1');
@@ -39,7 +39,9 @@
             if (count($errors) == 0) {
                 if ($_POST['username'] == 'admin' && $_POST['password'] == '123456') {
                     $_SESSION['username'] = $_POST['username'];
-                    $_SESSION['isAuth'] = true;
+                    header("Location: users.php");
+                    echo "login successful";
+                    exit;
                 }
             }
         }
