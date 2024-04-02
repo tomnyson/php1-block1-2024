@@ -13,19 +13,46 @@
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
+    <style>
+        .red {
+            color: red;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-primary">
+    <?php
+    // require_once('./provider.php');
+    require_once('./provider.php');
 
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['username'])) {
+            if (empty($_POST['username'])) {
+                $errors['username'] = "username is required";
+            }
+        }
+        if (isset($_POST['password'])) {
+            if (empty($_POST['password'])) {
+                $errors['password'] = "password is required";
+            } else {
+                if (strlen($_POST['password']) < 6) {
+                    $errors['password'] = "password lon hon 6 ki tu";
+                }
+            }
+        }
+    }
+
+
+
+    ?>
     <div class="container">
-
+        <?php
+        var_dump($conn);
+        ?>
         <!-- Outer Row -->
         <div class="row justify-content-center">
 
@@ -41,26 +68,39 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" method="POST" action="login.php">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
+
+                                            <input name="username" type="text" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address...">
+                                        </div>
+                                        <div class="red">
+                                            <?php
+                                            if (isset($errors['username'])) {
+                                                echo $errors['username'];
+                                            }
+                                            ?>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
+                                            <input name="password" type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
                                         </div>
+                                        <div class="red">
+                                            <?php
+                                            if (isset($errors['password'])) {
+                                                echo  $errors['password'];
+                                            }
+                                            ?>
+                                        </div>
+
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck">
                                                 <label class="custom-control-label" for="customCheck">Remember
                                                     Me</label>
+
                                             </div>
+
                                         </div>
-                                        <a href="index.html" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                        </a>
+                                        <button class="btn btn-primary btn-user btn-block" type="submit">Login</button>
                                         <hr>
                                         <a href="index.html" class="btn btn-google btn-user btn-block">
                                             <i class="fab fa-google fa-fw"></i> Login with Google

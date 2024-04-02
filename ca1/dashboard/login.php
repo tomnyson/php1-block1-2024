@@ -22,7 +22,11 @@
 
 <body class="bg-gradient-primary">
     <?php
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
     session_start();
+    require_once("./provider.php");
     $errors = [];
     // $_SESSION['ds_users'] = [];
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -47,13 +51,34 @@
                 }
             }
         }
+        if (isset($conn) && count($errors) == 0) {
+            try {
+                $query = "SELECT * FROM users where username = :username and password = :password";
+                $statement = $conn->prepare($query);
+                $statement->execute([
+                    "username" => $_POST['username'],
+                    "password" => $_POST['password']
+                ]);
+                echo "go here";
+                $statement->setFetchMode(PDO::FETCH_ASSOC);
+                if ($statement->rowCount() > 0) {
+                    // dang nhap thanh cong
+                    $_SESSION["username"] = $_POST['username'];
+
+                    header("Location: index.php");
+                }
+            } catch (\Exception $e) {
+                echo "Error: " . $e->getMessage();
+            }
+            // xu ly code trong nay
+
+        }
     }
 
 
     // var_dump($_SESSION);
     ?>
     <div class="container">
-
         <!-- Outer Row -->
         <div class="row justify-content-center">
 
