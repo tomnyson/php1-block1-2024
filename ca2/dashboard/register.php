@@ -26,38 +26,70 @@
 
 <body class="bg-gradient-primary">
     <?php
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    include_once('./provider.php');
+    $errors = [];
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $errors = [];
         if (isset($_POST['username'])) {
             if (empty($_POST['username'])) {
-                $errors['username'] = "username is required";
-            }
-        }
-
-        if (isset($_POST['password'])) {
-            if (empty($_POST['password'])) {
-                $errors['password'] = "username is required";
-            } else {
-                if (strlen($_POST['password']) < 6) {
-                    $errors['password'] = "password must be at least 6 characters";
-                }
-            }
-        }
-        if (isset($_POST['passwordconfirm'])) {
-            if ($_POST['password '] != $_POST['passwordconfirm']) {
-                $errors['passwordconfirm'] = "password not matches";
+                $errors['username'] = 'username is required';
             }
         }
         if (isset($_POST['email'])) {
             if (empty($_POST['email'])) {
-                $errors['email'] = "email is required";
+                $errors['email'] = 'email is required';
             } else {
                 if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                     $errors['email'] = "invalid email format";
                 }
             }
         }
+        if (isset($_POST['password'])) {
+            if (empty($_POST['password'])) {
+                $errors['password'] = 'password is required';
+            } else {
+                if (strlen($_POST['password']) < 6) {
+                    $errors['password'] = "password lon hon 6 ki tu";
+                }
+            }
+        }
+        if (isset($_POST['passwordconfirm'])) {
+            if (empty($_POST['passwordconfirm'])) {
+                $errors['passwordconfirm'] = "password confirm is required";
+            } else {
+                if ($_POST['passwordconfirm'] != $_POST['password']) {
+                    $errors['passwordconfirm'] = "password confirm not match";
+                }
+            }
+        }
+        if (isset($conn) && count($errors) == 0) {
+            // check ton tai username or email address
+            $queryCheck = "select * from users where username= :username";
+            $statement = $conn->prepare($queryCheck);
+            $statement->execute([
+                'username' => $_POST['username'],
+            ]);
+            $count = $statement->rowCount();
+            if ($count > 0) {
+                $errors['username'] = "username or email already exists";
+            } else {
+                //xu ly dang ky tai khoan
+                $query = "insert into users (username, password, email) values(:username, :password, :email)";
+                $statement = $conn->prepare($query);
+                $isCreated = $statement->execute([
+                    'username' => $_POST['username'],
+                    'password' => $_POST['password'],
+                    'email' => $_POST['email'],
+                ]);
+                if ($isCreated) {
+                    header("Location: login.php");
+                }
+            }
+        }
     }
+
     ?>
     <div class="container">
 
@@ -74,13 +106,14 @@
                             <form class="user" action="register.php" method="post">
                                 <div class=" form-group row">
                                     <div class="col-sm-12">
+
                                         <input name="username" type="text" class="form-control form-control-user" id="exampleLastName" placeholder="enter your username">
                                         <?php
-                                        if (isset($errors['username']) && $errors) {
+                                        if (isset($errors['username'])) {
                                             echo "<p class='red'>$errors[username]</p>";
                                         }
-
                                         ?>
+
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -89,8 +122,8 @@
                                     if (isset($errors['email'])) {
                                         echo "<p class='red'>$errors[email]</p>";
                                     }
-
                                     ?>
+
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
@@ -99,8 +132,8 @@
                                         if (isset($errors['password'])) {
                                             echo "<p class='red'>$errors[password]</p>";
                                         }
-
                                         ?>
+
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="password" name="passwordconfirm" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
@@ -108,8 +141,8 @@
                                         if (isset($errors['passwordconfirm'])) {
                                             echo "<p class='red'>$errors[passwordconfirm]</p>";
                                         }
-
                                         ?>
+
                                     </div>
                                 </div>
                                 <input type="submit" class="btn btn-primary btn-user btn-block" value=" Register Account" />
