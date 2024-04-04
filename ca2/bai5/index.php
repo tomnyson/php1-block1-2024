@@ -45,6 +45,7 @@
         }
 
         ?>
+
         <div class="row">
             <form action="index.php" class="col-sm-6" method="post">
                 <input class="form-control mb-5" type="text" name="username" placeholder="nhập tài khoản">

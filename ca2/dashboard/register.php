@@ -2,13 +2,7 @@
 <html lang="en">
 
 <head>
-    <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-    session_start();
-    require_once("./provider.php");
-    ?>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -42,7 +36,7 @@
 
         if (isset($_POST['password'])) {
             if (empty($_POST['password'])) {
-                $errors['password'] = "password is required";
+                $errors['password'] = "username is required";
             } else {
                 if (strlen($_POST['password']) < 6) {
                     $errors['password'] = "password must be at least 6 characters";
@@ -50,7 +44,7 @@
             }
         }
         if (isset($_POST['passwordconfirm'])) {
-            if ($_POST['password'] != $_POST['passwordconfirm']) {
+            if ($_POST['password '] != $_POST['passwordconfirm']) {
                 $errors['passwordconfirm'] = "password not matches";
             }
         }
@@ -63,34 +57,6 @@
                 }
             }
         }
-        if (isset($conn) && count($errors) == 0) {
-            $querycheckuser = "SELECT * from users WHERE email = :email and username = :username";
-            $statementcheck = $conn->prepare($querycheckuser);
-            $statementcheck->execute([
-                "username" => $_POST['username'],
-                "email" => $_POST['email'],
-            ]);
-            if ($statementcheck->rowCount() > 0) {
-                $errors["username"] = "Username da ton tai";
-            } else {
-                $query = "insert into users (username, email, password, role, status) values(:username, :email, :password, :role, :status)";
-                $statement = $conn->prepare($query);
-                $isCreated = $statement->execute([
-                    "username" => $_POST['username'],
-                    "password" =>  password_hash($_POST['password'], PASSWORD_DEFAULT),
-                    "email" => $_POST['email'],
-                    "role" => 1,
-                    "status" => 1,
-                ]);
-                if ($isCreated) {
-                    // thong bao
-                    header(("Location: login.php"));
-                }
-            }
-        }
-        // xu ly dang nhap
-
-
     }
     ?>
     <div class="container">

@@ -26,10 +26,14 @@
 
 <body class="bg-gradient-primary">
     <?php
-    // require_once('./provider.php');
-    require_once('./provider.php');
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    session_start();
+    include_once('./provider.php');
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $errors = [];
         if (isset($_POST['username'])) {
             if (empty($_POST['username'])) {
                 $errors['username'] = "username is required";
@@ -42,6 +46,24 @@
                 if (strlen($_POST['password']) < 6) {
                     $errors['password'] = "password lon hon 6 ki tu";
                 }
+            }
+        }
+
+        if (isset($conn) && count($errors) == 0) {
+            // xử lý login thanh conf
+            $query = "select * from users where username = :username and password = :password";
+            $statement = $conn->prepare($query);
+            $statement->execute([
+                'username' => $_POST['username'],
+                'password' => $_POST['password'],
+            ]);
+            $statement->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $statement->fetchAll();
+            var_dump($result);
+            if (count($result) > 0) {
+                // xu ly dang nhap thanh cong
+                $_SESSION["username"] = $_POST["username"];
+                header("Location: index.php");
             }
         }
     }
@@ -71,7 +93,7 @@
                                     <form class="user" method="POST" action="login.php">
                                         <div class="form-group">
 
-                                            <input name="username" type="text" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address...">
+                                            <input name="username" type="text" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter username...">
                                         </div>
                                         <div class="red">
                                             <?php
